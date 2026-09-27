@@ -234,6 +234,19 @@ function generateTrustedAuthCookie(request: NextRequest): NextResponse {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // TODO(debug): 临时调试开关 —— ?__dbg=1 回显 proxy 实际看到的路径与请求头，
+  // 用于定位 EdgeOne makers 适配器是否吞掉页面请求的真实路径。定位后删除。
+  if (request.nextUrl.searchParams.has('__dbg')) {
+    const hdrs: Record<string, string> = {};
+    request.headers.forEach((v, k) => {
+      hdrs[k] = v;
+    });
+    return new NextResponse(
+      JSON.stringify({ seenPathname: pathname, search: request.nextUrl.search, headers: hdrs }, null, 2),
+      { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } }
+    );
+  }
+
   // 处理 /adult/ 路径前缀，重写为实际 API 路径
   if (pathname.startsWith('/adult/')) {
     // 移除 /adult 前缀
