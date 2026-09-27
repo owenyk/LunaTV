@@ -439,6 +439,18 @@ function shouldSkipAuth(pathname: string): boolean {
     '/icons/',
     '/logo.png',
     '/screenshot.png',
+    // 登录/注册/警告等页面必须跳过认证：部分部署平台（如 EdgeOne Pages）
+    // 的 Next 适配器不完整执行 config.matcher 的负向排除，导致本文件
+    // 在 /login 上也运行，未认证请求被 handleAuthFailure 重定向回 /login
+    // 造成 307 无限自环。此处兜底放行，与 matcher 双保险。
+    '/login',
+    '/register',
+    '/oidc-register',
+    '/warning',
+    '/api/login',
+    '/api/register',
+    '/api/logout',
+    '/api/server-config',
     '/api/telegram/', // Telegram API 端点
     '/api/cache/', // 缓存 API 端点（内部使用，无需认证）
     '/api/client-log', // 客户端日志收集端点（无需认证）
