@@ -232,26 +232,6 @@ function generateTrustedAuthCookie(request: NextRequest): NextResponse {
 }
 
 export async function proxy(request: NextRequest) {
-  // TEMP DEBUG: echo request headers to diagnose EdgeOne pathname mangling (remove after)
-  if (request.nextUrl.searchParams.has('__dbg')) {
-    const dbgHeaders: Record<string, string> = {};
-    request.headers.forEach((v, k) => { dbgHeaders[k] = v; });
-    return new NextResponse(
-      JSON.stringify({
-        seenPathname: request.nextUrl.pathname,
-        url: request.url,
-        search: request.nextUrl.search,
-        x_pathname: request.headers.get('x-pathname'),
-        x_invoke_path: request.headers.get('x-invoke-path'),
-        x_search: request.headers.get('x-search'),
-        referer: request.headers.get('referer'),
-        host: request.headers.get('host'),
-        allHeaders: dbgHeaders,
-      }, null, 2),
-      { status: 200, headers: { 'content-type': 'application/json' } }
-    );
-  }
-
   const { pathname } = request.nextUrl;
 
 
