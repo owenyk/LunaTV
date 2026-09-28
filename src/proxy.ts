@@ -232,6 +232,23 @@ function generateTrustedAuthCookie(request: NextRequest): NextResponse {
 }
 
 export async function proxy(request: NextRequest) {
+  // TEMP DEBUG probe (edge-safe): echo pathname + EdgeOne injected headers
+  if (request.nextUrl.searchParams.has('__dbg')) {
+    return new NextResponse(
+      JSON.stringify({
+        seenPathname: request.nextUrl.pathname,
+        url: request.url,
+        x_pathname: request.headers.get('x-pathname'),
+        x_invoke_path: request.headers.get('x-invoke-path'),
+        x_search: request.headers.get('x-search'),
+        referer: request.headers.get('referer'),
+        host: request.headers.get('host'),
+        ua: request.headers.get('user-agent'),
+      }),
+      { status: 200, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } }
+    );
+  }
+
 
   const { pathname } = request.nextUrl;
 
